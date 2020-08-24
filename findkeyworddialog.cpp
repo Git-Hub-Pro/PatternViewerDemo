@@ -18,6 +18,7 @@ FindKeywordDialog::~FindKeywordDialog()
 void FindKeywordDialog::on_okButton_clicked()
 {
     QString keyword = ui->textEdit->toPlainText();
+    stringCount = 0;
 
     connect(this,SIGNAL(sendKeyword(QString)),parent(),SLOT(findKeyword(QString)));
 
@@ -29,3 +30,13 @@ void FindKeywordDialog::on_cancelButton_clicked()
     FindKeywordDialog::close ();
 }
 
+
+void FindKeywordDialog::on_nextButton_clicked()
+{
+    stringCount += 1;
+
+    connect(this,SIGNAL(sendValue(int)),parent(),SLOT(receiveValue(int)));
+
+    emit sendValue(stringCount);
+
+}

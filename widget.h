@@ -25,6 +25,7 @@ private slots:
     void on_findButton_clicked();
 
     void findKeyword(QString keyword);
+    void receiveValue(int stringCount);
 
 private:
     Ui::Widget *ui;
@@ -32,10 +33,11 @@ private:
 public:
     void printFileHeader(QByteArray *patFile);
     void printCommonHeader(QByteArray *patFile);
-
+    void setValue(int value){count = value;}
 
 private:
         bool isFirstTime;
+        int count;
 
 
 };

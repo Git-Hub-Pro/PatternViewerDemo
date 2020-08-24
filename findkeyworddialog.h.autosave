@@ -31,9 +31,6 @@ private slots:
 private:
     Ui::FindKeywordDialog *ui;
 
-public:
-      // Widget widgetAddress1;
-
 private :
       int stringCount = 0;
 

@@ -64,27 +64,59 @@ void Widget::findKeyword(QString keyword)
                    "The search field is empty. Please enter a word and click Find.");
        } else {
 
-           QTextCursor highlightCursor(document);
+           QTextCursor highlightCursorAll(document);
            QTextCursor cursor(document);
+
+           QTextCursor highlightCursorOne(document);
+           QTextCursor cursorOne(document);
+
+           // change All found characters in yellow background.
 
            cursor.beginEditBlock();
 
-           QTextCharFormat plainFormat(highlightCursor.charFormat());
+           QTextCharFormat plainFormat(highlightCursorAll.charFormat());
            QTextCharFormat colorFormat = plainFormat;
-           colorFormat.setForeground(Qt::red);
+           colorFormat.setBackground(Qt::yellow);
 
-           while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
-               highlightCursor = document->find(searchString, highlightCursor, QTextDocument::FindCaseSensitively);
+           while (!highlightCursorAll.isNull() && !highlightCursorAll.atEnd()) {
+               highlightCursorAll = document->find(searchString, highlightCursorAll, QTextDocument::FindCaseSensitively);
 
-               if (!highlightCursor.isNull()) {
+               if (!highlightCursorAll.isNull()) {
                    found = true;
-                   highlightCursor.movePosition(QTextCursor::Right,
+                   highlightCursorAll.movePosition(QTextCursor::Right,
                                           QTextCursor::KeepAnchor);
-                   highlightCursor.mergeCharFormat(colorFormat);
+                   highlightCursorAll.mergeCharFormat(colorFormat);
+
                }
            }
 
+
            cursor.endEditBlock();
+
+           QTextCharFormat plainFormatOne(highlightCursorOne.charFormat());
+           QTextCharFormat colorFormatOne = plainFormatOne;
+
+
+           cursorOne.beginEditBlock();
+
+           colorFormatOne.setBackground(Qt::green);
+
+           while (!highlightCursorOne.isNull() && !highlightCursorOne.atEnd()) {
+               highlightCursorOne = document->find(searchString, highlightCursorOne, QTextDocument::FindCaseSensitively);
+
+               if (!highlightCursorOne.isNull()) {
+
+                   highlightCursorOne.movePosition(QTextCursor::Right,
+                                          QTextCursor::KeepAnchor);
+                   highlightCursorOne.mergeCharFormat(colorFormatOne);
+
+                   highlightCursorOne.mergeCharFormat(colorFormat);
+
+               }
+           }
+
+           cursorOne.endEditBlock();
+
 
            isFirstTime = false;
            if (found == false) {
@@ -92,6 +124,12 @@ void Widget::findKeyword(QString keyword)
                    "Sorry, the word cannot be found.");
            }
        }
+}
+
+void Widget::receiveValue(int stringCount)
+{
+    setValue(stringCount);
+    qDebug()<<"count :"<<count<<"\n";
 }
 
 void Widget::on_findButton_clicked()
