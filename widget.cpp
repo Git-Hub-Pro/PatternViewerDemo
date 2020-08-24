@@ -5,6 +5,10 @@
 #include <QDebug>
 #include <QFile>
 #include <QByteArray>
+#include <QTextDocument>
+#include <QMessageBox>
+#include <QTextCursor>
+#include <QTextCharFormat>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -32,6 +36,74 @@ void Widget::on_openButton_clicked()
     printCommonHeader(&patFile);
 }
 
+void Widget::on_clearButton_clicked()
+{
+    ui->textEdit->clear();
+}
+
+void Widget::findKeyword(QString keyword)
+{
+
+   QString searchString = keyword;
+
+   qDebug()<<"keyword : "<<keyword<<'\n';
+
+   ui->textEdit->setUndoRedoEnabled(false);
+   ui->textEdit->setUndoRedoEnabled(true);
+
+
+   QTextDocument *document = ui->textEdit->document();
+
+   bool found = false;
+
+       if(isFirstTime==false)
+           document->undo();
+
+       if (searchString.isEmpty()) {
+           QMessageBox::information(this, tr("Empty Search Field"),
+                   "The search field is empty. Please enter a word and click Find.");
+       } else {
+
+           QTextCursor highlightCursor(document);
+           QTextCursor cursor(document);
+
+           cursor.beginEditBlock();
+
+           QTextCharFormat plainFormat(highlightCursor.charFormat());
+           QTextCharFormat colorFormat = plainFormat;
+           colorFormat.setForeground(Qt::red);
+
+           while (!highlightCursor.isNull() && !highlightCursor.atEnd()) {
+               highlightCursor = document->find(searchString, highlightCursor, QTextDocument::FindCaseSensitively);
+
+               if (!highlightCursor.isNull()) {
+                   found = true;
+                   highlightCursor.movePosition(QTextCursor::Right,
+                                          QTextCursor::KeepAnchor);
+                   highlightCursor.mergeCharFormat(colorFormat);
+               }
+           }
+
+           cursor.endEditBlock();
+
+           isFirstTime = false;
+           if (found == false) {
+               QMessageBox::information(this, tr("Word Not Found"),
+                   "Sorry, the word cannot be found.");
+           }
+       }
+}
+
+void Widget::on_findButton_clicked()
+{
+    FindKeywordDialog * dialog = new FindKeywordDialog(this);
+
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+
+}
+
 void Widget::printFileHeader(QByteArray *patFile)
 {
     File Obj;
@@ -53,7 +125,7 @@ void Widget::printFileHeader(QByteArray *patFile)
     ui->textEdit->append(Obj.readFileHeaderCountOfBlock(patFile).toHex());
     ui->textEdit->append("9. FileHeaderOffsetsOfBlocks : ");
     ui->textEdit->append(Obj. readFileHeaderOffsetsOfBlocks(patFile).toHex());
-    ui->textEdit->append("10. FileHeaderStartAddressArra : ");
+    ui->textEdit->append("10. FileHeaderStartAddressArray: ");
     ui->textEdit->append(Obj. readFileHeaderStartAddressArray(patFile).toHex());
     ui->textEdit->append("11. FileHeaderRemark : ");
     ui->textEdit->append(Obj. readFileHeaderRemark(patFile).toHex());
@@ -74,17 +146,6 @@ void Widget::printCommonHeader(QByteArray *patFile)
     ui->textEdit->append(Obj.readCommonHeaderReserved(patFile).toHex());
 }
 
-void Widget::on_clearButton_clicked()
-{
-    ui->textEdit->clear();
-}
 
-void Widget::on_findButton_clicked()
-{
-    FindKeywordDialog * dialog = new FindKeywordDialog(this);
 
-    dialog->show();
-    dialog->raise();
-    dialog->activateWindow();
 
-}

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QString>
+#include <QDebug>
 
 namespace Ui {
 class Widget;
@@ -23,12 +24,19 @@ private slots:
 
     void on_findButton_clicked();
 
+    void findKeyword(QString keyword);
+
 private:
     Ui::Widget *ui;
 
 public:
     void printFileHeader(QByteArray *patFile);
     void printCommonHeader(QByteArray *patFile);
+
+
+private:
+        bool isFirstTime;
+
 
 };
 

@@ -2,8 +2,7 @@
 #define FINDKEYWORDDIALOG_H
 
 #include <QDialog>
-
-extern QString keyWord; //extern value be careful use.
+#include "widget.h"
 
 namespace Ui {
 class FindKeywordDialog;
@@ -17,13 +16,21 @@ public:
     explicit FindKeywordDialog(QWidget *parent = 0);
     ~FindKeywordDialog();
 
+signals:
+    void sendKeyword(QString keyword);
+
 private slots:
     void on_okButton_clicked();
 
     void on_cancelButton_clicked();
 
+
 private:
     Ui::FindKeywordDialog *ui;
+
+public:
+      Widget widgetAddress1;
+
 
 
 };

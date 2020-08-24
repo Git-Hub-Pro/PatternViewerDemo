@@ -1,5 +1,6 @@
 #include "findkeyworddialog.h"
 #include "ui_findkeyworddialog.h"
+#include "widget.h"
 #include <QDebug>
 
 FindKeywordDialog::FindKeywordDialog(QWidget *parent) :
@@ -16,11 +17,15 @@ FindKeywordDialog::~FindKeywordDialog()
 
 void FindKeywordDialog::on_okButton_clicked()
 {
-    QString keyWord = ui->textEdit->toPlainText();
-    qDebug() <<keyWord;
+    QString keyword = ui->textEdit->toPlainText();
+
+    connect(this,SIGNAL(sendKeyword(QString)),parent(),SLOT(findKeyword(QString)));
+
+    emit sendKeyword(keyword);
 }
 
 void FindKeywordDialog::on_cancelButton_clicked()
 {
     FindKeywordDialog::close ();
 }
+
